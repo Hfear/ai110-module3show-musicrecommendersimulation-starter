@@ -7,6 +7,8 @@ from src.recommender import load_songs, recommend_songs
 
 def main() -> None:
     songs = load_songs("data/songs.csv")
+    print(f"Loaded songs: {len(songs)}")
+    print()
 
     # --- User profile: dictionary base + liked songs bonus ---
     user_prefs = {
@@ -29,11 +31,13 @@ def main() -> None:
 
     print("Top Recommendations")
     print("=" * 50)
-    for i, (song, score, explanation) in enumerate(recommendations, 1):
+    for i, (song, score, reasons_str) in enumerate(recommendations, 1):
         print(f"{i}. {song['title']} by {song['artist']}")
         print(f"   Genre: {song['genre']} | Mood: {song['mood']} | Energy: {song['energy']}")
         print(f"   Score: {score:.4f}")
-        print(f"   Why:   {explanation}")
+        print(f"   Why:")
+        for reason in reasons_str.split(" | "):
+            print(f"     - {reason}")
         print()
 
 
