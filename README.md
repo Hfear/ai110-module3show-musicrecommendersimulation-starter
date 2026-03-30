@@ -11,23 +11,35 @@ Your goal is to:
 - Evaluate what your system gets right and wrong
 - Reflect on how this mirrors real world AI recommenders
 
-Replace this paragraph with your own summary of what your version does.
+DESCP:
+First we build a quick profile of the user from the songs they already like. That profile lets us rank new songs against their favorites and find music that aligns with their vibe, even if it’s in a completely different genre.
 
 ---
 
 ## How The System Works
 
-Explain your design in plain language.
+- We look at the songs a user already likes and build a quick profile from them
+- That profile is just the average feel of their liked songs: average energy, average acousticness, most common genre, most common mood
+- We then score every other song in the catalog by how close it is to that profile
+- Songs that match the genre or mood of the liked songs score higher
+- Songs that feel similar in energy and texture also score higher, even if the genre is different
+- We rank all the scores and return the top matches
 
-Some prompts to answer:
+### Song features
 
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
+- genre - style of the track (lofi, pop, rock, jazz, ambient, synthwave, indie pop)
+- mood - emotional feel (chill, happy, intense, focused, relaxed, moody)
+- energy - how driving or mellow the song is (0 to 1)
+- acousticness - how organic vs produced the sound is (0 to 1)
+- valence - how bright or dark the song feels (0 to 1)
 
-You can include a simple diagram or bullet list if helpful.
+### UserProfile (built from liked songs, not filled in manually)
+
+- Average energy of liked songs
+- Average acousticness of liked songs
+- Most common genre across liked songs
+- Most common mood across liked songs
+- The original liked songs list (used for soft frequency scoring)
 
 ---
 
