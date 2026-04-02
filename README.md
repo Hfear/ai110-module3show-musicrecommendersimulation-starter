@@ -27,11 +27,11 @@ First we build a quick profile of the user from the songs they already like. Tha
 
 ### Song Features
 
-- genre - style of the track (lofi, pop, rock, jazz, ambient, synthwave, indie pop, hip-hop, r&b, classical, metal, country, electronic)
-- mood - emotional feel (chill, happy, intense, focused, relaxed, moody, energetic, sad, angry, nostalgic, romantic)
-- energy - how driving or mellow the song is (0 to 1)
-- acousticness - how organic vs produced the sound is (0 to 1)
-- valence - how bright or dark the song feels (0 to 1)
+ genre - style of the track (lofi, pop, rock, jazz, ambient, synthwave, indie pop, hip-hop, r&b, classical, metal, country, electronic)
+ mood - emotional feel (chill, happy, intense, focused, relaxed, moody, energetic, sad, angry, nostalgic, romantic)
+ energy - how driving or mellow the song is (0 to 1)
+ acousticness - how organic vs produced the sound is (0 to 1)
+ valence - how bright or dark the song feels (0 to 1)
 
 ### UserProfile (built from liked songs + dictionary base)
 
@@ -74,7 +74,7 @@ Step 4 - Sort all scores highest to lowest and return the top 5
 ```
 music-recommender/
 ├── data/
-│   └── songs.csv          # song catalog (10 songs)
+│   └── songs.csv          # song catalog (20 songs)
 ├── src/
 │   ├── main.py            # entry point
 │   └── recommender.py     # Song, UserProfile, Recommender classes
@@ -119,26 +119,31 @@ You can add more tests in `tests/test_recommender.py`.
 ---
 
 ## Experiments You Tried
+![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
+![alt text](image-4.png)
+![alt text](image-5.png)
+![alt text](image-6.png)
+**Weight shift — double energy, halve genre**
 
-Use this section to document the experiments you ran. For example:
+Changed genre weight from 0.35 to 0.175 and energy weight from 0.25 to 0.50, then re-ran the High-Energy Pop Fan profile. The ranking order did not change at all. The same five songs appeared in the same positions with higher absolute scores but identical relative order. This revealed that energy was already the dominant signal for that profile even before the experiment — because all three liked pop songs were already in the catalog and excluded from results, the genre weight had nothing to match against. The signal that looked weaker was actually running the show.
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+**Adversarial profiles**
+
+Three edge-case profiles were tested to stress-test the scoring logic:
+- High energy (0.88) + sad mood: the system recommended a soft r&b song (Slow Burn Letter) because genre weight (0.35) dominated over the energy mismatch. A user who wants something loud and dark got something quiet and melancholy.
+- Cold start (no liked songs): the fallback to explicit genre/mood fields worked — the system still returned reasonable ambient/focused results.
+- Mixed taste (three different genres liked): the centroid spread out and energy proximity became the main tiebreaker, producing results that were sonically similar but stylistically scattered.
 
 ---
 
 ## Limitations and Risks
 
-Summarize some limitations of your recommender.
-
-Examples:
-
-- It only works on a tiny catalog
-- It does not understand lyrics or language
-- It might over favor one genre or mood
-
-You will go deeper on this in your model card.
+- Genre weight (0.35) is too high — a song in the wrong genre gets a large automatic penalty even if its energy, mood, and texture are a perfect match. A pop fan whose liked songs are all already in the catalog gets zero pop recommendations because those songs are excluded, making the genre weight irrelevant for that profile.
+- The catalog is too small (20 songs) to provide real variety. With only 1–2 songs per genre, the system frequently returns songs that are the "least-bad option" rather than a genuine match. Adding more songs per genre would matter more than any weight adjustment.
+- Mood labels are manually assigned and subjective — "intense" appears on both a rock anthem and a pop workout track, so the system treats them as equivalent even though they feel completely different as listening experiences.
 
 ---
 
@@ -153,5 +158,9 @@ Write 1 to 2 paragraphs here about what you learned:
 - about how recommenders turn data into predictions
 - about where bias or unfairness could show up in systems like this
 
+Through this assignment I learned how you need to make your algorithms very dynamic and be sure to have factors from multiple sectors to account for human nuance. Even if I have a correct algo, it needs to accurately reflect human nature. We are attracted to certain features and not only exact genres or numbers, and we need to be able to understand this first to write something that reflects that.
+AI tools helped do a lot of the syntax and coding, but their recommendations for the algo were far too granular and had no vision of how people's personal tastes could be reflected in music, and this made equations that were too stiff.
+Pattern recognition can feel like the program is reading your mind, but really it's just fine-tuned guesses that are padded with information.
+If I extended this project, I would want to have a recommended radio list based on a specific song, like how Spotify has implemented. I think that is a better way to do recommendations.
 
 ---
